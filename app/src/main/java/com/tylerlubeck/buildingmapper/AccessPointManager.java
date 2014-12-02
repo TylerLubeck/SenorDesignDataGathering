@@ -156,12 +156,11 @@ public class AccessPointManager {
                 Date now = new Date();
                 Log.d("BUILDINGMAPPER", Long.toString(now.getTime() - last_scan.getTime()));
                 last_scan = now;
-                Log.d("BUILDINGMAPPER", "Got wifi scan number " + num_times_called);
+                Toast.makeText(global_ctx, "Did scan " + num_times_called, Toast.LENGTH_SHORT).show();
                 wifiManager.startScan();
             }
-            if (num_times_called % 5 == 0) {
-                Toast.makeText(global_ctx, "Did scan " + num_times_called, Toast.LENGTH_SHORT).show();
-            }
+
+
             if (num_times_called == num_polls) {
                 global_ctx.unregisterReceiver(bcastReceiver);
                 if (upload) {

@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +34,7 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     private Button getAPs;
     private Button saveBtn;
     private FloorMapImage Fimage;
+    private ImageView image_view;
 
     void getAccessPoints(int numberOfPolls, boolean upload, int id) {
         new AccessPointManager(this, numberOfPolls, upload, id, this.Fimage);
@@ -59,25 +62,32 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
     protected void onCreate(Bundle savedInstanceState) {
         final Context global_ctx = this;
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_building_mapper);
-        getAPs = (Button) findViewById(R.id.get_access_points_btn);
         whereAmI = (Button) findViewById(R.id.where_am_i_btn);
+        image_view = (ImageView) findViewById(R.id.floorImage);
+        Fimage = new FloorMapImage("halligan", 2, image_view, this);
+        /*
+        getAPs = (Button) findViewById(R.id.get_access_points_btn);
         saveBtn = (Button) findViewById(R.id.save_access_points_btn);
         room_picker = (Spinner) findViewById(R.id.room_picker_spinner);
         point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
+        */
 
+        /*
         FloorListAdapter room_adapter = new FloorListAdapter(this, new ArrayList<Floor>());
         room_picker.setAdapter(room_adapter);
 
         GetFloorsAsyncTask fill_room_drop_down = new GetFloorsAsyncTask(getString(R.string.get_room_names_url),
                 room_adapter,
-                null /* params */);
+                null );
         fill_room_drop_down.execute();
 
         room_picker.setOnItemSelectedListener(this);
 
         saveBtn.setOnClickListener(this);
         getAPs.setOnClickListener(this);
+        */
         whereAmI.setOnClickListener(this);
     }
 
@@ -106,19 +116,22 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
             return;
         }
         switch (view.getId()) {
+
+            /*
             case R.id.get_access_points_btn:
                 Toast.makeText(this, "About to do 1 scan", Toast.LENGTH_LONG).show();
-                getAccessPoints(1, false /* upload */, 0 /* id, not used because not uploading */);
-                break;
+                //getAccessPoints(1, false , 0 );
+                //break;
             case R.id.save_access_points_btn:
                 Toast.makeText(this, "About to do 30 scans", Toast.LENGTH_LONG).show();
                 selected_location = (Location) point_picker.getSelectedItem();
-                getAccessPoints(30, true /* upload */, selected_location.getId());
+                getAccessPoints(30, true, selected_location.getId());
                 int num_items = point_picker.getAdapter().getCount() - 1;
                 int next_pos = point_picker.getSelectedItemPosition() + 4;
                 int next_index = num_items < next_pos ? num_items : next_pos;
                 //point_picker.setSelection(next_index);
                 break;
+            */
             case R.id.where_am_i_btn:
                 Toast.makeText(this, "About to do 2 scans", Toast.LENGTH_LONG).show();
                 getAccessPoints(2, true /* upload */, -1 /* id, not used because not uploading */);
@@ -147,17 +160,16 @@ public class BuildingMapper extends Activity implements View.OnClickListener, Ad
         point_picker.setOnItemSelectedListener(Fimage);
 
         String url = getString(R.string.get_access_points_url) + "/" + room.getBuilding() + "/" + String.valueOf(room.getFloor());
-
         point_picker.setAdapter(points_adapter);
-        //GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(getString(R.string.get_access_points_url), points_adapter, params);
         GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(url, points_adapter, null);
         fill_points_drop_down.execute();
+        //GetPointsAsyncTask fill_points_drop_down = new GetPointsAsyncTask(getString(R.string.get_access_points_url), points_adapter, params);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         Log.d("BUILDINGMAPPER", "NOTHING SELECTED");
-        Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
+        //Spinner point_picker = (Spinner) findViewById(R.id.location_picker_spinner);
         ArrayAdapter<String> adapter = (ArrayAdapter)point_picker.getAdapter();
         adapter.clear();
         adapter.notifyDataSetChanged();

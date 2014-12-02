@@ -29,8 +29,10 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
     private int radius, pt_x, pt_y;
     private Bitmap unmarked;
     private ImageView image;
+    String building;
 
     FloorMapImage(String building, int floorNum, ImageView _image, Context _ctx){
+        this.building = building;
         image = _image;
         w = 1200;
         h = 800;
@@ -38,6 +40,7 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
         ctx = _ctx;
         pt_x = -1;
         pt_y = -1;
+        /*
         String file_path = building.toLowerCase() + String.valueOf(floorNum);
         image.setImageResource(ctx.getResources().getIdentifier(file_path , "drawable", ctx.getPackageName()));
         Bitmap Floorbitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
@@ -45,6 +48,28 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
         original_w = Floorbitmap.getWidth();
         unmarked = Bitmap.createScaledBitmap(Floorbitmap, w, h, true);
         image.setImageBitmap(unmarked);
+        */
+        this.create_image(building, floorNum);
+    }
+
+    public void create_image(int floorNum) {
+        this.create_image(this.building, floorNum);
+    }
+
+    public void create_image(String building, int floorNum) {
+        String file_path = building.toLowerCase() + String.valueOf(floorNum);
+        Log.d("BUILDINGMAPPER", "NEW FILE: " + file_path);
+        this.image.setImageResource(this.ctx.getResources().getIdentifier(file_path , "drawable", ctx.getPackageName()));
+        Bitmap Floorbitmap = ((BitmapDrawable)this.image.getDrawable()).getBitmap();
+        this.original_h = Floorbitmap.getHeight();
+        this.original_w = Floorbitmap.getWidth();
+        this.unmarked = Bitmap.createScaledBitmap(Floorbitmap, this.w, this.h, true);
+        this.image.setImageBitmap(this.unmarked);
+    }
+
+    public void create_and_draw_point(int floorNum, int x, int y) {
+        this.create_image(floorNum);
+        this.draw_point_noclear(x, y);
     }
 
     void draw_point(int x, int y){
@@ -62,9 +87,13 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
         image.setImageBitmap(bmp);
     }
 
+    public String getBuilding() {
+        return building;
+    }
+
     void draw_point_noclear(int x, int y){
         Log.d("DRAWING AT:",Integer.toString(x) + ":" + Integer.toString(y));
-        Bitmap bmp = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        Bitmap bmp = ((BitmapDrawable)this.image.getDrawable()).getBitmap();
         if(x >= 0 && y >= 0 ) {
             float scaled_x = x * (float) w / (float) original_w;
             float scaled_y = y * (float) h / (float) original_h;
@@ -73,7 +102,7 @@ public class FloorMapImage  extends Activity implements AdapterView.OnItemSelect
             Canvas canvas = new Canvas(bmp);
             canvas.drawCircle(scaled_x, scaled_y, radius, paint);
         }
-        image.setImageBitmap(bmp);
+        this.image.setImageBitmap(bmp);
     }
 
     @Override
