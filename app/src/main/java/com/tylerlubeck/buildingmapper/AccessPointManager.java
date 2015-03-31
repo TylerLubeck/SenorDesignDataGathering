@@ -26,7 +26,7 @@ public class AccessPointManager {
         UPLOAD,
         QUERY
     }
-    final static int NUM_MAPPING_POLLS = 10;
+    final static int NUM_MAPPING_POLLS = 2;
     final static int NUM_QUERY_POLLS = 2;
 
     private int num_times_called;
